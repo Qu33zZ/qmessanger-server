@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Provider } from "@nestjs/common";
 import axios from "axios";
 import {SNS} from "aws-sdk";
 import "dotenv/config";
+import { ServicesInjectTokens } from "../services.inject.tokens";
+import { ISmsService } from "./interfaces/ISms.service";
 
 @Injectable()
-export class SmsService {
-	async sendMessage(text:string, phoneNumbers:string[]):Promise<any>{
+export class SmsService implements ISmsService{
+	async sendMessage(text:string, phoneNumbers:string):Promise<any>{
 		const options = {
 			method: 'POST',
 			url: 'https://d7sms.p.rapidapi.com/messages/v1/send',
@@ -23,7 +25,7 @@ export class SmsService {
 }
 
 @Injectable()
-export class SmsServiceAws {
+export class SmsServiceAws implements ISmsService{
 	async sendMessage(text:string, phoneNumber:string):Promise<any>{
 		const params:SNS.PublishInput = {
 			Message: text,
@@ -41,3 +43,9 @@ export class SmsServiceAws {
 
 	}
 }
+
+
+export const SmsServiceProvider:Provider = {
+	provide:ServicesInjectTokens.SmsService,
+	useClass:SmsServiceAws
+};

@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SmsService, SmsServiceAws } from "./sms.service";
+import { SmsServiceProvider } from "./sms.service";
 
 @Module({
-	providers: [{
-		provide:SmsServiceAws,
-		useClass:SmsServiceAws
-	}],
-	exports:[SmsServiceAws]
+	providers: [SmsServiceProvider],
+	exports:[SmsServiceProvider]
 })
 export class SmsModule {}

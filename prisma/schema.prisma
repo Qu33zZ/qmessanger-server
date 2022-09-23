@@ -17,6 +17,8 @@ model User {
   surname String?
   sessions Session[]
   authCodes AuthCode[]
+  chats Chat[]
+  messages Message[]
   lastOnlineAt DateTime @default(now())
   createdAt DateTime @default(now())
 }
@@ -35,5 +37,22 @@ model AuthCode{
 	user User @relation(fields: [userId], references: [id])
 	userId String
 	code String
+	createdAt DateTime @default(now())
+}
+
+model Chat{
+	id String @id @default(uuid())
+	members User[]
+	messages Message[]
+	createdAt DateTime @default(now())
+}
+
+model Message{
+	id String @id @default(uuid())
+	author User @relation(fields: [authorId], references: [id])
+	authorId String
+	chat Chat @relation(fields: [chatId], references: [id])
+	chatId String
+	content String
 	createdAt DateTime @default(now())
 }

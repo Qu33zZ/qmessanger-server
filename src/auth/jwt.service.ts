@@ -1,8 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Provider } from "@nestjs/common";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { User as UserModel } from "@prisma/client";
 import { ISessionTokens } from "./interfaces/ISession.tokens";
 import {JwtService as NestJwt} from "@nestjs/jwt";
+import { ServicesInjectTokens } from "../services.inject.tokens";
+import { AuthService } from "./auth.service";
 
 @Injectable()
 export class JwtService implements IJwtService {
@@ -27,3 +29,9 @@ export class JwtService implements IJwtService {
 	}
 
 }
+
+
+export const JwtServiceProvider:Provider = {
+	provide:ServicesInjectTokens.JwtService,
+	useClass:JwtService
+};

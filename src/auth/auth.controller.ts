@@ -4,11 +4,12 @@ import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { AuthService } from "./auth.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
+import { ServicesInjectTokens } from "../services.inject.tokens";
 
 @Controller("auth")
 export class AuthController {
 	constructor(
-		@Inject(AuthService)
+		@Inject(ServicesInjectTokens.AuthService)
 		private readonly authService: IAuthService,
 	) {}
 

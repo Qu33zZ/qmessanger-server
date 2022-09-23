@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import { AuthServiceProvider } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../prisma/prisma.module";
-import { JwtService } from "./jwt.service";
+import {  JwtServiceProvider } from "./jwt.service";
 import { JwtModule } from "@nestjs/jwt";
 import "dotenv/config";
 import { SmsModule } from "../sms/sms.module";
@@ -10,14 +10,8 @@ import { SmsModule } from "../sms/sms.module";
 @Module({
 	controllers: [AuthController],
 	providers: [
-		{
-			provide: AuthService,
-			useClass: AuthService,
-		},
-		{
-			provide: JwtService,
-			useClass: JwtService,
-		},
+		AuthServiceProvider,
+		JwtServiceProvider,
 	],
 	imports: [
 		JwtModule.register({
