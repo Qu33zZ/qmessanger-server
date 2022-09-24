@@ -19,8 +19,8 @@ export class UserService implements IUserService {
 		return user;
 	}
 
-	async edit(data: Partial<IUserDTO>): Promise<UserModel> {
-		const user = await this.prismaService.user.update({ where: { phoneNumber: data.phoneNumber }, data });
+	async edit(userId:string, data: Partial<IUserDTO>): Promise<UserModel> {
+		const user = await this.prismaService.user.update({ where: { id:userId }, data });
 		return user;
 	}
 

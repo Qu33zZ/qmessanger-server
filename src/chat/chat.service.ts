@@ -13,7 +13,6 @@ export class ChatService implements IChatService {
 		@Inject(ServicesInjectTokens.UserService) private readonly userService: IUserService,
 	) {}
 
-
 	private async checkIfChatExists(members:string[]):Promise<boolean>{
 		const chat = await this.prismaService.chat.findFirst({
 			where:{
