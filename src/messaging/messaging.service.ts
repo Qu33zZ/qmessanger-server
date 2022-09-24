@@ -10,8 +10,6 @@ export class MessagingService implements IMessagingService {
 	constructor(private readonly prismaService:PrismaService) {}
 
 	async create(user:UserModel, channelId: string, messageDto: IMessageCreateDTO): Promise<MessageModel> {
-		console.log("User" + user.id)
-
 		//find chat using id and check if user is one of the chat members;
 		const chat = await this.prismaService.chat.findFirst({where:{id:channelId, members:{some:{id:user.id}}}, include:{members:true}});
 		if(!chat) throw new BadRequestException({message:"Chat not found"});
@@ -29,6 +27,22 @@ export class MessagingService implements IMessagingService {
 
 		return message;
 		// if(!chat.members.includes(user)) throw new ForbiddenException({message:"You are not allowed to send messages in this chat"});
+	}
+
+	async update(userId:string, messageId: string, messageDto: Partial<IMessageCreateDTO>): Promise<MessageModel> {
+		const message = await this.prismaService.message.findFirst({where:{id:messageId}, include:{author:true}});
+		if(!message) throw new BadRequestException({message:"Message not found"});
+
+		if(message.author.id !== userId) throw new ForbiddenException({message:"You can edit only your messages"});
+
+		return this.prismaService.message.update({where: {id: message.id}, data:messageDto});
+	}
+
+	async delete(userId:string, messageId: string): Promise<void> {
+		const message = await this.prismaService.message.findFirst({where:{id:messageId, authorId:userId}});
+		if(!message) throw new BadRequestException({message:"Message not found"});
+		
+		await this.prismaService.message.delete({where:{id:message.id}})
 	}
 }
 
