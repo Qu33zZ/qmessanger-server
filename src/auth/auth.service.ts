@@ -14,7 +14,7 @@ import { ISmsService } from "../sms/interfaces/ISms.service";
 export class AuthService implements IAuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@Inject(ServicesInjectTokens.SmsService) private readonly smsService:ISmsService,
+		@Inject(ServicesInjectTokens.SmsService) private readonly smsService: ISmsService,
 		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService: IJwtService,
 	) {}
 
@@ -35,32 +35,32 @@ export class AuthService implements IAuthService {
 			});
 
 		const code = await this.createVerificationCode(user);
+		console.log(code);
+		//this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
 
-		this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
-
-		return {userId:user.id, code};
+		return { userId: user.id, code };
 	}
 
-	async confirmLogin(code:string, userId:string):Promise<ILoginResponse>{
-		const user = await this.prismaService.user.findUnique({where:{id:userId}});
-		if(!user) throw new NotFoundException({message:"User not found"});
+	async confirmLogin(code: string, userId: string): Promise<ILoginResponse> {
+		const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+		if (!user) throw new NotFoundException({ message: "User not found" });
 
-		const authCode = await this.prismaService.authCode.findFirst({where:{userId:userId, code}});
-		if(!authCode) throw new UnauthorizedException({message:"Invalid authorization code"});
+		const authCode = await this.prismaService.authCode.findFirst({ where: { userId: userId, code } });
+		if (!authCode) throw new UnauthorizedException({ message: "Invalid authorization code" });
 
 		const session = await this.createSession(user);
 
-		await this.prismaService.authCode.delete({where:{id:authCode.id}});
+		await this.prismaService.authCode.delete({ where: { id: authCode.id } });
 
 		return {
 			user,
-			session
-		}
+			session,
+		};
 	}
 
-	private async createVerificationCode(user:UserModel):Promise<string>{
-		const code = Math.round((Math.random() * (900000) + 100000)).toString();
-		await this.prismaService.authCode.create({data:{userId:user.id, code}});
+	private async createVerificationCode(user: UserModel): Promise<string> {
+		const code = Math.round(Math.random() * 900000 + 100000).toString();
+		await this.prismaService.authCode.create({ data: { userId: user.id, code } });
 		return code;
 	}
 
@@ -81,8 +81,7 @@ export class AuthService implements IAuthService {
 	}
 }
 
-
-export const AuthServiceProvider:Provider = {
-	provide:ServicesInjectTokens.AuthService,
-	useClass:AuthService
+export const AuthServiceProvider: Provider = {
+	provide: ServicesInjectTokens.AuthService,
+	useClass: AuthService,
 };

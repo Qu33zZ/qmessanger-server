@@ -6,32 +6,28 @@ import { IUserDTO } from "./interfaces/IUser.dto";
 import { ServicesInjectTokens } from "../services.inject.tokens";
 
 @Injectable()
-export class UserService implements IUserService{
-	constructor(private readonly prismaService:PrismaService) {}
+export class UserService implements IUserService {
+	constructor(private readonly prismaService: PrismaService) {}
 
-	async create(data):Promise<UserModel>{
-		 const user = await this.prismaService.user.create(data);
-		 return user;
+	async create(data): Promise<UserModel> {
+		const user = await this.prismaService.user.create(data);
+		return user;
 	}
 
 	async find(key: keyof UserModel, value: any): Promise<UserModel> {
-		const user = await this.prismaService.user.findUnique({where:{[key]:value}});
+		const user = await this.prismaService.user.findUnique({ where: { [key]: value } });
 		return user;
 	}
 
-	async edit(data:Partial<IUserDTO>): Promise<UserModel> {
-		const user = await this.prismaService.user.update({where:{phoneNumber:data.phoneNumber}, data})
+	async edit(data: Partial<IUserDTO>): Promise<UserModel> {
+		const user = await this.prismaService.user.update({ where: { phoneNumber: data.phoneNumber }, data });
 		return user;
 	}
 
-	async delete(id: string): Promise<void> {
-	}
-
-
+	async delete(id: string): Promise<void> {}
 }
 
-
-export const UserServiceProvider:Provider = {
-	provide:ServicesInjectTokens.UserService,
-	useClass:UserService
+export const UserServiceProvider: Provider = {
+	provide: ServicesInjectTokens.UserService,
+	useClass: UserService,
 };

@@ -1,3 +1,3 @@
-export interface IChatCreateDTO{
-	memberId:string;
+export interface IChatCreateDTO {
+	memberId: string;
 }

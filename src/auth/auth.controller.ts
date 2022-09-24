@@ -9,20 +9,19 @@ import { ServicesInjectTokens } from "../services.inject.tokens";
 @Controller("auth")
 export class AuthController {
 	constructor(
-		@Inject(ServicesInjectTokens.AuthService)
-		private readonly authService: IAuthService,
+		@Inject(ServicesInjectTokens.AuthService) private readonly authService: IAuthService,
 	) {}
 
 	@Post("/login")
 	@HttpCode(HttpStatus.OK)
-	async login(@Body() data: ILoginDTO){
+	async login(@Body() data: ILoginDTO) {
 		return await this.authService.login(data);
 	}
 
 	@Post("/confirmLogin/:userId/:code")
 	@HttpCode(HttpStatus.OK)
-	async confirmLogin(@Param("userId") userId:string, @Param("code") code:string):Promise<ILoginResponse> {
-		console.log(`Code ${code} | id ${userId} `)
+	async confirmLogin(@Param("userId") userId: string, @Param("code") code: string): Promise<ILoginResponse> {
+		console.log(`Code ${code} | id ${userId} `);
 		return await this.authService.confirmLogin(code, userId);
 	}
 

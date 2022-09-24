@@ -1,8 +1,7 @@
-export enum ServicesInjectTokens{
-	ChatService='ChatService',
-	SmsService='SmsService',
-	UserService="UserService",
-	AuthService="AuthService",
-	JwtService="JwtService"
-
-};
+export enum ServicesInjectTokens {
+	ChatService = "ChatService",
+	SmsService = "SmsService",
+	UserService = "UserService",
+	AuthService = "AuthService",
+	JwtService = "JwtService",
+}

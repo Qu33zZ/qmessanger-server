@@ -1,20 +1,30 @@
-import { Controller, Inject } from "@nestjs/common";
-import { ChatService } from './chat.service';
+import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards } from "@nestjs/common";
+import { User as UserModel } from "@prisma/client";
 import { IChatService } from "./interfaces/IChatService";
-import {Chat as ChatModel} from "@prisma/client";
+import { Chat as ChatModel } from "@prisma/client";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
 import { ServicesInjectTokens } from "../services.inject.tokens";
+import { User } from "../user/decorators/user.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 
-@Controller('chat')
-export class ChatController implements IChatService{
+@Controller("chats")
+export class ChatController {
 	constructor(@Inject(ServicesInjectTokens.ChatService) private readonly chatService: IChatService) {}
 
-	async create(dto:IChatCreateDTO):Promise<ChatModel> {
-		return;
+	@Get()
+	@UseGuards(JwtAuthGuard)
+	async getAllPosts(@User() user:UserModel): Promise<ChatModel[]> {
+		return await this.chatService.findAll(user);
 	}
 
-	async delete(chatId:string):Promise<ChatModel>{
-		return;
+	@Post("/")
+	@UseGuards(JwtAuthGuard)
+	async create(@User() user: UserModel, @Body() dto: IChatCreateDTO): Promise<ChatModel> {
+		return await this.chatService.create(user, dto);
 	}
 
+	@Delete("/:id")
+	async delete(@Param(":id") chatId: string): Promise<ChatModel> {
+		return await this.chatService.delete(chatId);
+	}
 }
