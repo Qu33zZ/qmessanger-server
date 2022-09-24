@@ -18,6 +18,7 @@ export class JwtAuthGuard implements CanActivate {
 
 		if (!session.user) throw new UnauthorizedException({ message: "Discord user not found" });
 
+		//save user to metadata to get it in controller later, using @User decorator
 		Reflect.defineMetadata("user", session.user, context.getHandler());
 		return true;
 	}

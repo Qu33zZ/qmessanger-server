@@ -13,7 +13,7 @@ export class ChatController {
 
 	@Get()
 	@UseGuards(JwtAuthGuard)
-	async getAllPosts(@User() user:UserModel): Promise<ChatModel[]> {
+	async getAllChats(@User() user:UserModel): Promise<ChatModel[]> {
 		return await this.chatService.findAll(user);
 	}
 

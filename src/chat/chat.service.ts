@@ -49,7 +49,7 @@ export class ChatService implements IChatService {
 			where: {
 				members:{some:user}
 			},
-			include:{members:true}
+			include:{members:true, messages:true}
 		})
 
 		return chats;
