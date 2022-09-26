@@ -21,7 +21,6 @@ export class AuthController {
 	@Post("/confirmLogin/:userId/:code")
 	@HttpCode(HttpStatus.OK)
 	async confirmLogin(@Param("userId") userId: string, @Param("code") code: string): Promise<ILoginResponse> {
-		console.log(`Code ${code} | id ${userId} `);
 		return await this.authService.confirmLogin(code, userId);
 	}
 

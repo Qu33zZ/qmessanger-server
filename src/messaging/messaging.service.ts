@@ -26,7 +26,6 @@ export class MessagingService implements IMessagingService {
 			}});
 
 		return message;
-		// if(!chat.members.includes(user)) throw new ForbiddenException({message:"You are not allowed to send messages in this chat"});
 	}
 
 	async update(userId:string, messageId: string, messageDto: Partial<IMessageCreateDTO>): Promise<MessageModel> {
