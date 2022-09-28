@@ -1,13 +1,15 @@
-import { BadRequestException, ForbiddenException, Injectable, Provider } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Inject, Injectable, Provider } from "@nestjs/common";
 import { IMessagingService } from "./interfaces/IMessaging.service";
 import { ServicesInjectTokens } from "../services.inject.tokens";
 import {Message as MessageModel, User as UserModel} from "@prisma/client";
 import { IMessageCreateDTO } from "./interfaces/IMessage.create.dto";
 import { PrismaService } from "../prisma/prisma.service";
+import { SocketGatewaysGateway } from "../socket-gateways/socket-gateways.gateway";
 
 @Injectable()
 export class MessagingService implements IMessagingService {
-	constructor(private readonly prismaService:PrismaService) {}
+	constructor(private readonly prismaService:PrismaService,
+	            private socketsService:SocketGatewaysGateway) {}
 
 	async create(user:UserModel, channelId: string, messageDto: IMessageCreateDTO): Promise<MessageModel> {
 		//find chat using id and check if user is one of the chat members;
@@ -22,10 +24,14 @@ export class MessagingService implements IMessagingService {
 			},
 			include:{
 				author:true,
-				chat:true
+				chat:{
+					include:{members:true}
+				}
 			}});
 
+		await this.socketsService.sendNewMessageToClient(message);
 		return message;
+
 	}
 
 	async update(userId:string, messageId: string, messageDto: Partial<IMessageCreateDTO>): Promise<MessageModel> {
