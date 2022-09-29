@@ -40,14 +40,40 @@ export class MessagingService implements IMessagingService {
 
 		if(message.author.id !== userId) throw new ForbiddenException({message:"You can edit only your messages"});
 
-		return this.prismaService.message.update({where: {id: message.id}, data:messageDto});
+		const updatedMessage = await this.prismaService.message.update({where: {id: message.id},
+			data:messageDto,
+			include:{
+				chat:{
+					include:{
+						members:true
+					}
+				},
+				author:true
+			}
+		});
+
+		await this.socketsService.sendMessageEdit(updatedMessage);
+		return updatedMessage;
 	}
 
 	async delete(userId:string, messageId: string): Promise<void> {
 		const message = await this.prismaService.message.findFirst({where:{id:messageId, authorId:userId}});
 		if(!message) throw new BadRequestException({message:"Message not found"});
-		
-		await this.prismaService.message.delete({where:{id:message.id}})
+		const deletedMessage = await this.prismaService.message.delete({
+			where:{
+				id:message.id
+			},
+			include:{
+				chat:{
+					include:{
+						members:true
+					}
+				},
+				author:true
+			}
+		});
+
+		await this.socketsService.sendMessageDelete(deletedMessage);
 	}
 }
 

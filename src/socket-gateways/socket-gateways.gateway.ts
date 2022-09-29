@@ -27,10 +27,19 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 
 	async sendNewMessageToClient(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}):Promise<any>{
 		const messageData = await this.socketGatewaysService.sendNewMessage(message);
-		console.log(messageData.clients);
 		this.wws.to(messageData.clients).emit("message", message);
-
 	}
+
+	async sendMessageDelete(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}):Promise<any>{
+		const messageData = await this.socketGatewaysService.sendMessageDelete(message);
+		this.wws.to(messageData.clients).emit("messageDelete", message);
+	}
+
+	async sendMessageEdit(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}):Promise<any>{
+		const messageData = await this.socketGatewaysService.sendMessageEdit(message);
+		this.wws.to(messageData.clients).emit("messageEdit", message);
+	}
+
 
 	handleDisconnect(client: Socket): any {
 	}

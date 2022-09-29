@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable, Provider} from "@nestjs/common";
 import { ServicesInjectTokens } from "../services.inject.tokens";
-import { WebSocketServer, WsException } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
+import { WsException } from "@nestjs/websockets";
+import { Socket } from "socket.io";
 import { PrismaService } from "../prisma/prisma.service";
 import {Message as MessageModel, Chat as ChatModel, User as UserModel} from "@prisma/client";
 
@@ -27,11 +27,27 @@ export class SocketGatewaysService {
 	};
 
 	async sendNewMessage(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = message.chat.members.map(member => this.socketsWithUsersId[member.id]);
+		const idsToSend = await this.getClientsId(message.chat);
 
 		delete message.chat.members;
 
 		return {clients:idsToSend, message};
+	}
+
+	async sendMessageDelete(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
+		const idsToSend = await this.getClientsId(message.chat);
+
+		return {clients:idsToSend, message};
+	}
+
+	async sendMessageEdit(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
+		const idsToSend = await this.getClientsId(message.chat);
+
+		return {clients:idsToSend, message};
+	}
+
+	private async getClientsId(chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
+		return chat.members.map(member => this.socketsWithUsersId[member.id]);
 	}
 
 }
