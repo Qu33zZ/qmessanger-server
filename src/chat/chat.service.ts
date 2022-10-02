@@ -47,9 +47,15 @@ export class ChatService implements IChatService {
 	async findAll(user: UserModel): Promise<ChatModel[]> {
 		const chats = await this.prismaService.chat.findMany({
 			where: {
-				members:{some:user}
+				members:{some:user},
 			},
-			include:{members:true, messages:true}
+			include:{
+				members:true,
+				messages:{
+					orderBy:{createdAt:"desc"},
+					take:1
+				}
+			}
 		})
 
 		return chats;
