@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, Provider } from "@nestjs/common";
 import { IMessagingService } from "./interfaces/IMessaging.service";
 import { ServicesInjectTokens } from "../services.inject.tokens";
-import {Message as MessageModel, User as UserModel} from "@prisma/client";
+import {Message as MessageModel, User as UserModel, Chat as ChatModel} from "@prisma/client";
 import { IMessageCreateDTO } from "./interfaces/IMessage.create.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { SocketGatewaysGateway } from "../socket-gateways/socket-gateways.gateway";
@@ -34,6 +34,22 @@ export class MessagingService implements IMessagingService {
 
 	}
 
+	async findAll(user:UserModel, chatId:string):Promise<(MessageModel & {author: UserModel, chat: ChatModel})[]>{
+		const messages = await this.prismaService.message.findMany({
+			where:{
+				chatId,
+			},
+			orderBy:{
+				createdAt:"desc",
+			},
+			include:{
+				chat:true,
+				author:true,
+			}
+		});
+
+		return messages;
+	}
 	async update(userId:string, messageId: string, messageDto: Partial<IMessageCreateDTO>): Promise<MessageModel> {
 		const message = await this.prismaService.message.findFirst({where:{id:messageId}, include:{author:true}});
 		if(!message) throw new BadRequestException({message:"Message not found"});
