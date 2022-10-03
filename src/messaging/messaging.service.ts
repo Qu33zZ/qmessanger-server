@@ -40,7 +40,7 @@ export class MessagingService implements IMessagingService {
 				chatId,
 			},
 			orderBy:{
-				createdAt:"desc",
+				createdAt:"asc",
 			},
 			include:{
 				chat:true,

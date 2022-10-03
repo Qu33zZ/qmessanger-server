@@ -16,7 +16,7 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	async getMe(@User() user:UserModel):Promise<UserModel>{
 		return user;
-	};
+	}
 
 	@Put("/@me")
 	@HttpCode(HttpStatus.OK)
