@@ -5,5 +5,6 @@ export enum ServicesInjectTokens {
 	AuthService = "AuthService",
 	JwtService = "JwtService",
 	MessagingService = "MessagingService",
-	SocketGatewaysService = "SocketGatewaysService"
+	SocketGatewaysService = "SocketGatewaysService",
+	EmailVerificationService = "EmailVerificationService",
 }

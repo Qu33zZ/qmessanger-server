@@ -1,8 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Inject, Param, Post } from "@nestjs/common";
-
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
-import { AuthService } from "./auth.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
 import { ServicesInjectTokens } from "../services.inject.tokens";
 

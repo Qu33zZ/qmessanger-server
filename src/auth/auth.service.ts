@@ -6,9 +6,10 @@ import { Session as SessionModel, User as UserModel } from "@prisma/client";
 import { JwtService } from "./jwt.service";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
-import { SmsServiceAws } from "../sms/sms.service";
+import { SmsServiceAws } from "../sms-verification/sms.service";
 import { ServicesInjectTokens } from "../services.inject.tokens";
-import { ISmsService } from "../sms/interfaces/ISms.service";
+import { ISmsService } from "../sms-verification/interfaces/ISms.service";
+import { IEmailVerificationService } from "../email-verification/interfaces/IEmail.verification.service";
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -16,6 +17,7 @@ export class AuthService implements IAuthService {
 		private readonly prismaService: PrismaService,
 		@Inject(ServicesInjectTokens.SmsService) private readonly smsService: ISmsService,
 		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService: IJwtService,
+		@Inject(ServicesInjectTokens.EmailVerificationService) private readonly loginVerificationService:IEmailVerificationService
 	) {}
 
 	async login(loginDTO: ILoginDTO): Promise<any> {
@@ -36,9 +38,10 @@ export class AuthService implements IAuthService {
 
 		const code = await this.createVerificationCode(user);
 		console.log(code);
+		this.loginVerificationService.sendMessage(code, loginDTO.phoneNumber);
 		//this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
 
-		return { userId: user.id, code };
+		return { userId: user.id};
 	}
 
 	async confirmLogin(code: string, userId: string): Promise<ILoginResponse> {
@@ -79,7 +82,7 @@ export class AuthService implements IAuthService {
 		});
 		return session;
 	}
-}
+};
 
 export const AuthServiceProvider: Provider = {
 	provide: ServicesInjectTokens.AuthService,
