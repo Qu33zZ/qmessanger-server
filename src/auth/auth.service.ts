@@ -3,27 +3,23 @@ import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { Session as SessionModel, User as UserModel } from "@prisma/client";
-import { JwtService } from "./jwt.service";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
-import { SmsServiceAws } from "../sms-verification/sms.service";
 import { ServicesInjectTokens } from "../services.inject.tokens";
-import { ISmsService } from "../sms-verification/interfaces/ISms.service";
 import { IEmailVerificationService } from "../email-verification/interfaces/IEmail.verification.service";
 
 @Injectable()
 export class AuthService implements IAuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@Inject(ServicesInjectTokens.SmsService) private readonly smsService: ISmsService,
 		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService: IJwtService,
 		@Inject(ServicesInjectTokens.EmailVerificationService) private readonly loginVerificationService:IEmailVerificationService
 	) {}
 
 	async login(loginDTO: ILoginDTO): Promise<any> {
-		let user = await this.prismaService.user.findUnique({
+		let user = await this.prismaService.user.findFirst({
 			where: {
-				phoneNumber: loginDTO.phoneNumber,
+				email: loginDTO.email,
 			},
 		});
 
@@ -32,13 +28,13 @@ export class AuthService implements IAuthService {
 				data: {
 					name: "User",
 					surname: (Math.random() * 10000).toFixed(0),
-					phoneNumber: loginDTO.phoneNumber,
+					email: loginDTO.email,
 				},
 			});
 
 		const code = await this.createVerificationCode(user);
 		console.log(code);
-		this.loginVerificationService.sendMessage(code, loginDTO.phoneNumber);
+		this.loginVerificationService.sendMessage(code, loginDTO.email);
 		//this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
 
 		return { userId: user.id};

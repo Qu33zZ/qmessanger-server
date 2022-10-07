@@ -1,5 +1,4 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Put, UseGuards } from "@nestjs/common";
-import { UserService } from "./user.service";
 import { IUserService } from "./interfaces/IUser.service";
 import { ServicesInjectTokens } from "../services.inject.tokens";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";

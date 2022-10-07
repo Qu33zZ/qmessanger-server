@@ -1,3 +1,3 @@
 export interface ILoginDTO {
-	phoneNumber: string;
+	email: string;
 }

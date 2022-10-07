@@ -4,10 +4,8 @@ import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../prisma/prisma.module";
 import { JwtServiceProvider } from "./jwt.service";
 import { JwtModule } from "@nestjs/jwt";
-import { SmsModule } from "../sms-verification/sms.module";
 import { UserModule } from "../user/user.module";
 import "dotenv/config";
-import { EmailVerificationService } from "../email-verification/email-verification.service";
 import { EmailVerificationModule } from "../email-verification/email-verification.module";
 
 @Module({
@@ -19,7 +17,6 @@ import { EmailVerificationModule } from "../email-verification/email-verificatio
 		}),
 		PrismaModule,
 		UserModule,
-		SmsModule,
 		EmailVerificationModule,
 	],
 })
