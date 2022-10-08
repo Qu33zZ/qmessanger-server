@@ -65,11 +65,14 @@ export class AuthService implements IAuthService {
 	}
 
 	async refresh(refreshToken:string):Promise<ILoginResponse>{
+		console.log("Refreshing")
+		if(!refreshToken) throw new BadRequestException({message:"Invalid refresh token: no token"});
+
 		const session = await this.prismaService.session.findFirst({where:{refreshToken}});
-		if(!session) throw new BadRequestException({message:"Invalid refresh token"});
+		if(!session) throw new BadRequestException({message:"Invalid refresh token: no session"});
 
 		const validTokenData = await this.jwtService.verifyJwt(refreshToken);
-		if(!validTokenData) throw new BadRequestException({message:"Invalid refresh token"});
+		if(!validTokenData) throw new BadRequestException({message:"Invalid refresh token: invalid token"});
 
 		const user = await this.prismaService.user.findFirst({where:{id:validTokenData.id}});
 
