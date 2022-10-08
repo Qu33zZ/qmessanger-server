@@ -3,4 +3,5 @@ import { ISessionTokens } from "./ISession.tokens";
 
 export interface IJwtService {
 	generateJwtPair(user: UserModel): Promise<ISessionTokens>;
+	verifyJwt(token:string):Promise<UserModel | null>;
 }

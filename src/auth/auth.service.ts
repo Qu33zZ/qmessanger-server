@@ -1,4 +1,11 @@
-import { Inject, Injectable, NotFoundException, Provider, UnauthorizedException } from "@nestjs/common";
+import {
+	BadRequestException,
+	Inject,
+	Injectable,
+	NotFoundException,
+	Provider,
+	UnauthorizedException,
+} from "@nestjs/common";
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { PrismaService } from "../prisma/prisma.service";
@@ -57,6 +64,27 @@ export class AuthService implements IAuthService {
 		};
 	}
 
+	async refresh(refreshToken:string):Promise<ILoginResponse>{
+		console.log("Refreshing")
+		if(!refreshToken) throw new BadRequestException({message:"Invalid refresh token: no token"});
+
+		const session = await this.prismaService.session.findFirst({where:{refreshToken}});
+		if(!session) throw new BadRequestException({message:"Invalid refresh token: no session"});
+
+		const validTokenData = await this.jwtService.verifyJwt(refreshToken);
+		if(!validTokenData) throw new BadRequestException({message:"Invalid refresh token: invalid token"});
+
+		const user = await this.prismaService.user.findFirst({where:{id:validTokenData.id}});
+
+		const newPairOfTokens = await this.jwtService.generateJwtPair(user);
+
+		const updatedSession = await this.prismaService.session.update({where:{id:session.id}, data:{...newPairOfTokens, createdAt:new Date()}})
+
+		return {
+			session:updatedSession,
+			user
+		}
+	}
 	private async createVerificationCode(user: UserModel): Promise<string> {
 		const code = Math.round(Math.random() * 900000 + 100000).toString();
 		await this.prismaService.authCode.create({ data: { userId: user.id, code } });

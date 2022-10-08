@@ -1,10 +1,15 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
-import { UserService } from "../../user/user.service";
+import { ServicesInjectTokens } from "../../services.inject.tokens";
+import { IJwtService } from "../interfaces/IJwt.service";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-	constructor(private readonly prismaService: PrismaService) {}
+	constructor(
+		private readonly prismaService: PrismaService,
+		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService:IJwtService
+	) {}
+
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 		const token = request?.headers?.authorization?.split(" ")[1];
@@ -16,7 +21,10 @@ export class JwtAuthGuard implements CanActivate {
 		});
 		if (!session) throw new UnauthorizedException({ message: "Invalid authorization token" });
 
-		if (!session.user) throw new UnauthorizedException({ message: "Discord user not found" });
+		const isTokenValid = await this.jwtService.verifyJwt(token);
+		if(!isTokenValid) throw new UnauthorizedException({ message: "Invalid authorization token" });
+
+		if (!session.user) throw new UnauthorizedException({ message: "User not found" });
 
 		//save user to metadata to get it in controller later, using @User decorator
 		Reflect.defineMetadata("user", session.user, context.getHandler());

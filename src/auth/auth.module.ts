@@ -16,8 +16,8 @@ import { EmailVerificationModule } from "../email-verification/email-verificatio
 			secret: process.env.JWT_SECRET || "asdfbgfdafgewr32rdsgbkfnskfshbj3",
 		}),
 		PrismaModule,
-		UserModule,
 		EmailVerificationModule,
 	],
+	exports:[JwtServiceProvider]
 })
 export class AuthModule {}

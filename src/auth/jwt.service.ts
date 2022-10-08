@@ -22,7 +22,7 @@ export class JwtService implements IJwtService {
 		};
 	}
 
-	async checkJwt(jwt: string): Promise<UserModel | null> {
+	async verifyJwt(jwt: string): Promise<UserModel | null> {
 		const secret = this.getJwtSecret();
 		return await this.jwtService.verifyAsync(jwt, { secret }).catch(() => null);
 	}
