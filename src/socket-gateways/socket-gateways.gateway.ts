@@ -2,14 +2,16 @@ import {
 	OnGatewayConnection,
 	OnGatewayDisconnect, OnGatewayInit,
 	WebSocketGateway, WebSocketServer,
+	BaseWsExceptionFilter
 } from "@nestjs/websockets";
 import { SocketGatewaysService } from './socket-gateways.service';
 import { Server, Socket } from "socket.io";
-import { Inject, Logger } from "@nestjs/common";
+import { Inject, Logger, UseFilters } from "@nestjs/common";
 import { ServicesInjectTokens } from "../services.inject.tokens";
 import {Message as MessageModel, Chat as ChatModel, User as UserModel} from "@prisma/client";
 
-@WebSocketGateway()
+@WebSocketGateway({cors:{origin:"*"}})
+@UseFilters(new BaseWsExceptionFilter())
 export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit{
 	constructor(@Inject(ServicesInjectTokens.SocketGatewaysService) private readonly socketGatewaysService: SocketGatewaysService) {}
 	private readonly logger:Logger = new Logger("WebSocketGateways");

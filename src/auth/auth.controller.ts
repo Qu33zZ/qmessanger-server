@@ -26,6 +26,7 @@ export class AuthController {
 	@Post("/refresh")
 	@HttpCode(HttpStatus.OK)
 	async refresh(@Req() request: Request) {
+		console.log(request.cookies);
 		return await this.authService.refresh(request.cookies?.refreshToken);
 	}
 

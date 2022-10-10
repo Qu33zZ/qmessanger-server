@@ -27,7 +27,7 @@ export class SocketGatewaysService {
 	};
 
 	async sendNewMessage(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.chat);
+		const idsToSend = await this.getClientsId(message.author, message.chat);
 
 		delete message.chat.members;
 
@@ -35,19 +35,22 @@ export class SocketGatewaysService {
 	}
 
 	async sendMessageDelete(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.chat);
+		const idsToSend = await this.getClientsId(message.author, message.chat);
 
 		return {clients:idsToSend, message};
 	}
 
 	async sendMessageEdit(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.chat);
+		const idsToSend = await this.getClientsId(message.author, message.chat);
 
 		return {clients:idsToSend, message};
 	}
 
-	private async getClientsId(chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
-		return chat.members.map(member => this.socketsWithUsersId[member.id]);
+	private async getClientsId(messageAuthor:UserModel, chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
+		return chat.members.reduce((acc:string[], member) => {
+			if(member.id !== messageAuthor.id) acc.push(this.socketsWithUsersId[member.id]);
+			return acc;
+		}, []);
 	}
 
 }
