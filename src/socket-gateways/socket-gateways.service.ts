@@ -18,8 +18,8 @@ export class SocketGatewaysService {
 			where: { accessToken:token},
 			include: { user: true },
 		});
-		if (!session) throw new WsException({ message: "Invalid authorization token", code:HttpStatus.UNAUTHORIZED});
-		if (!session.user) throw new WsException({ message: "User not found", code:HttpStatus.UNAUTHORIZED});
+		if (!session) return new WsException({ message: "Invalid authorization token", code:HttpStatus.UNAUTHORIZED});
+		if (!session.user) return new WsException({ message: "User not found", code:HttpStatus.UNAUTHORIZED});
 		this.socketsWithUsersId[session.user.id] = client.id;
 
 		console.log(JSON.stringify(session));

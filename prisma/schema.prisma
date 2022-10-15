@@ -53,6 +53,9 @@ model Message{
 	authorId String
 	chat Chat @relation(fields: [chatId], references: [id])
 	chatId String
+	repliedTo Message? @relation(name:"replies", fields: [repliedToId], references: [id])
+	repliedToId String?
+	replies Message[] @relation(name:"replies")
 	content String
 	createdAt DateTime @default(now())
 }
