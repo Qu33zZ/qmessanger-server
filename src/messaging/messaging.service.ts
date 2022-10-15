@@ -20,13 +20,15 @@ export class MessagingService implements IMessagingService {
 			data: {
 				...messageDto,
 				chatId:chat.id,
-				authorId:user.id
+				authorId:user.id,
 			},
 			include:{
 				author:true,
 				chat:{
 					include:{members:true}
-				}
+				},
+				repliedTo:true,
+				replies:true
 			}});
 
 		await this.socketsService.sendNewMessageToClient(message);
@@ -45,6 +47,7 @@ export class MessagingService implements IMessagingService {
 			include:{
 				chat:true,
 				author:true,
+				repliedTo:true
 			}
 		});
 
@@ -64,7 +67,8 @@ export class MessagingService implements IMessagingService {
 						members:true
 					}
 				},
-				author:true
+				author:true,
+				repliedTo:true
 			}
 		});
 
