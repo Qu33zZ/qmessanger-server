@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable, Provider} from "@nestjs/common";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { WsException } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { PrismaService } from "../prisma/prisma.service";
@@ -57,6 +56,6 @@ export class SocketGatewaysService {
 
 
 export const SocketGatewaysServiceProvider:Provider = {
-	provide:ServicesInjectTokens.SocketGatewaysService,
+	provide:"WebsocketService",
 	useClass:SocketGatewaysService
 };

@@ -1,15 +1,15 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from "@nestjs/common";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { IMessagingService } from "./interfaces/IMessaging.service";
 import { IMessageCreateDTO } from "./interfaces/IMessage.create.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "../user/decorators/user.decorator";
 import {User as UserModel} from "@prisma/client";
+import { InjectMessagingService } from "./decotators/chat.service.inject";
 
 @Controller('messages')
 export class MessagingController {
 	constructor(
-		@Inject(ServicesInjectTokens.MessagingService) private readonly messagingService: IMessagingService
+		@InjectMessagingService private readonly messagingService: IMessagingService
 	) {}
 
 	@Post("/channels/:channelId")

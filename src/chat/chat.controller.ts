@@ -3,13 +3,13 @@ import { User as UserModel } from "@prisma/client";
 import { IChatService } from "./interfaces/IChatService";
 import { Chat as ChatModel } from "@prisma/client";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { User } from "../user/decorators/user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
+import { InjectChatService } from "./decotators/chat.service.inject";
 
 @Controller("chats")
 export class ChatController {
-	constructor(@Inject(ServicesInjectTokens.ChatService) private readonly chatService: IChatService) {}
+	constructor(@InjectChatService private readonly chatService: IChatService) {}
 
 	@Get()
 	@UseGuards(JwtAuthGuard)

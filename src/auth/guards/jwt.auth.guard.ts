@@ -1,13 +1,13 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
-import { ServicesInjectTokens } from "../../services.inject.tokens";
 import { IJwtService } from "../interfaces/IJwt.service";
+import { InjectJwtService } from "../decotators/jwt.service.inject";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService:IJwtService
+		@InjectJwtService private readonly jwtService:IJwtService
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {

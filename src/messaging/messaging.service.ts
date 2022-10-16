@@ -1,6 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, Provider } from "@nestjs/common";
 import { IMessagingService } from "./interfaces/IMessaging.service";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import {Message as MessageModel, User as UserModel, Chat as ChatModel} from "@prisma/client";
 import { IMessageCreateDTO } from "./interfaces/IMessage.create.dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -99,6 +98,6 @@ export class MessagingService implements IMessagingService {
 
 
 export const MessagingServiceProvider:Provider = {
-	provide:ServicesInjectTokens.MessagingService,
+	provide:"MessagingService",
 	useClass:MessagingService
 };

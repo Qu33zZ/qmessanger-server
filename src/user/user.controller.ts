@@ -1,14 +1,14 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Put, UseGuards } from "@nestjs/common";
 import { IUserService } from "./interfaces/IUser.service";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "./decorators/user.decorator";
 import {User as UserModel} from "@prisma/client";
 import { IUserDTO } from "./interfaces/IUser.dto";
+import { InjectUserService } from "./decorators/user.service.inject";
 
 @Controller("users")
 export class UserController {
-	constructor(@Inject(ServicesInjectTokens.UserService) private readonly userService: IUserService) {};
+	constructor(@InjectUserService private readonly userService: IUserService) {};
 
 	@Get("/@me")
 	@HttpCode(HttpStatus.OK)

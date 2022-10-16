@@ -1,16 +1,16 @@
 import { BadRequestException, Inject, Injectable, Provider } from "@nestjs/common";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { IChatService } from "./interfaces/IChatService";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
 import { Chat as ChatModel, User as UserModel } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { IUserService } from "../user/interfaces/IUser.service";
+import { InjectUserService } from "../user/decorators/user.service.inject";
 
 @Injectable()
 export class ChatService implements IChatService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@Inject(ServicesInjectTokens.UserService) private readonly userService: IUserService,
+		@InjectUserService private readonly userService: IUserService,
 	) {}
 
 	private async checkIfChatExists(members:string[]):Promise<boolean>{
@@ -69,6 +69,6 @@ export class ChatService implements IChatService {
 }
 
 export const ChatServiceProvider: Provider = {
-	provide: ServicesInjectTokens.ChatService,
+	provide: "ChatService",
 	useClass: ChatService,
 };
