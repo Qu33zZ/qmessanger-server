@@ -1,11 +1,4 @@
-import {
-	BadRequestException,
-	Inject,
-	Injectable,
-	NotFoundException,
-	Provider,
-	UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, Provider, UnauthorizedException } from "@nestjs/common";
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { PrismaService } from "../prisma/prisma.service";

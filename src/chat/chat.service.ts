@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Provider } from "@nestjs/common";
+import { BadRequestException, Injectable, Provider } from "@nestjs/common";
 import { IChatService } from "./interfaces/IChatService";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
 import { Chat as ChatModel, User as UserModel } from "@prisma/client";

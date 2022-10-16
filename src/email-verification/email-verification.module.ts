@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { EmailEmailVerificationServiceProvider} from "./email-verification.service";
+import { Module } from "@nestjs/common";
+import { EmailEmailVerificationServiceProvider } from "./email-verification.service";
 
 @Module({
 	providers: [EmailEmailVerificationServiceProvider],

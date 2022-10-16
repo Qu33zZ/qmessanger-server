@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards } from "@nestjs/common";
-import { User as UserModel } from "@prisma/client";
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Chat as ChatModel, User as UserModel } from "@prisma/client";
 import { IChatService } from "./interfaces/IChatService";
-import { Chat as ChatModel } from "@prisma/client";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
 import { User } from "../user/decorators/user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";

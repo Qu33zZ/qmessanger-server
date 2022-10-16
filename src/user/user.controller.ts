@@ -1,8 +1,8 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Put, UseGuards } from "@nestjs/common";
 import { IUserService } from "./interfaces/IUser.service";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "./decorators/user.decorator";
-import {User as UserModel} from "@prisma/client";
+import { User as UserModel } from "@prisma/client";
 import { IUserDTO } from "./interfaces/IUser.dto";
 import { InjectUserService } from "./decorators/user.service.inject";
 

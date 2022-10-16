@@ -1,4 +1,4 @@
-import {  Inject } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 
 
 export const InjectEmailVerificationService =  (target: object, propertyKey: string, parameterIndex: number) => {

@@ -1,4 +1,4 @@
-import {  Inject } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 
 
 export const InjectJwtService =  (target: object, propertyKey: string, parameterIndex: number) => {

@@ -1,4 +1,4 @@
-import {  Inject } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 
 
 export const InjectWebsocketService =  (target: object, propertyKey: string, parameterIndex: number) => {

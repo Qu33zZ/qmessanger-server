@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, Provider } from "@nestjs/common";
 import { IMessagingService } from "./interfaces/IMessaging.service";
-import {Message as MessageModel, User as UserModel, Chat as ChatModel} from "@prisma/client";
+import { Chat as ChatModel, Message as MessageModel, User as UserModel } from "@prisma/client";
 import { IMessageCreateDTO } from "./interfaces/IMessage.create.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { SocketGatewaysGateway } from "../socket-gateways/socket-gateways.gateway";

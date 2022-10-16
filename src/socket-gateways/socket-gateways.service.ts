@@ -1,8 +1,8 @@
-import { HttpStatus, Injectable, Provider} from "@nestjs/common";
+import { HttpStatus, Injectable, Provider } from "@nestjs/common";
 import { WsException } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { PrismaService } from "../prisma/prisma.service";
-import {Message as MessageModel, Chat as ChatModel, User as UserModel} from "@prisma/client";
+import { Chat as ChatModel, Message as MessageModel, User as UserModel } from "@prisma/client";
 
 @Injectable()
 export class SocketGatewaysService {

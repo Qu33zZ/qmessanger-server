@@ -1,4 +1,4 @@
-import {Message as MessageModel, User as UserModel, Chat as ChatModel} from '@prisma/client';
+import { Chat as ChatModel, Message as MessageModel, User as UserModel } from "@prisma/client";
 import { IMessageCreateDTO } from "./IMessage.create.dto";
 
 export interface IMessagingService{
