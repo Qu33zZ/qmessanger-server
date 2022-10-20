@@ -1,9 +1,8 @@
-import { HttpCode, HttpException, HttpStatus, Injectable, Provider } from "@nestjs/common";
-import { ServicesInjectTokens } from "../services.inject.tokens";
+import "dotenv/config";
+import { HttpException, HttpStatus, Injectable, Provider } from "@nestjs/common";
 import { IEmailVerificationService } from "./interfaces/IEmail.verification.service";
 import { createTransport } from "nodemailer";
 import { NODEMAILER_CONFIG } from "../nodemailer.config";
-import "dotenv/config";
 
 @Injectable()
 export class EmailVerificationService implements IEmailVerificationService{
@@ -113,6 +112,6 @@ export class EmailVerificationService implements IEmailVerificationService{
 
 
 export const EmailEmailVerificationServiceProvider:Provider={
-	provide:ServicesInjectTokens.EmailVerificationService,
+	provide:"EmailVerificationService",
 	useClass:EmailVerificationService
 };

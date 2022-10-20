@@ -1,14 +1,14 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Inject, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Param, Post, Req } from "@nestjs/common";
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { Request } from "express";
+import { InjectAuthService } from "./decotators/auth.service.inject";
 
 @Controller("auth")
 export class AuthController {
 	constructor(
-		@Inject(ServicesInjectTokens.AuthService) private readonly authService: IAuthService,
+		@InjectAuthService private readonly authService: IAuthService,
 	) {}
 
 	@Post("/login")

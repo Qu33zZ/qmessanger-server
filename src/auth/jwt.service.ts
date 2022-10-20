@@ -1,13 +1,14 @@
+import "dotenv/config";
 import { Injectable, Provider } from "@nestjs/common";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { User as UserModel } from "@prisma/client";
 import { ISessionTokens } from "./interfaces/ISession.tokens";
 import { JwtService as NestJwt } from "@nestjs/jwt";
-import { ServicesInjectTokens } from "../services.inject.tokens";
+
 
 @Injectable()
 export class JwtService implements IJwtService {
-	constructor(private readonly jwtService: NestJwt) {}
+	constructor(private readonly jwtService: NestJwt) {};
 
 	private getJwtSecret(): string {
 		return process.env.JWT_SECRET || "asdfbgfdafgewr32rdsgbkfnskfshbj3";
@@ -29,6 +30,6 @@ export class JwtService implements IJwtService {
 }
 
 export const JwtServiceProvider: Provider = {
-	provide: ServicesInjectTokens.JwtService,
+	provide: "JwtService",
 	useClass: JwtService,
 };

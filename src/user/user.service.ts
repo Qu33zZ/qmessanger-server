@@ -3,7 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { User as UserModel } from "@prisma/client";
 import { IUserService } from "./interfaces/IUser.service";
 import { IUserDTO } from "./interfaces/IUser.dto";
-import { ServicesInjectTokens } from "../services.inject.tokens";
+
 
 @Injectable()
 export class UserService implements IUserService {
@@ -28,6 +28,6 @@ export class UserService implements IUserService {
 }
 
 export const UserServiceProvider: Provider = {
-	provide: ServicesInjectTokens.UserService,
+	provide: "UserService",
 	useClass: UserService,
 };

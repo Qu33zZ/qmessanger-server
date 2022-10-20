@@ -1,11 +1,10 @@
+import "dotenv/config";
 import { Module } from "@nestjs/common";
 import { AuthServiceProvider } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../prisma/prisma.module";
 import { JwtServiceProvider } from "./jwt.service";
 import { JwtModule } from "@nestjs/jwt";
-import { UserModule } from "../user/user.module";
-import "dotenv/config";
 import { EmailVerificationModule } from "../email-verification/email-verification.module";
 
 @Module({
@@ -17,7 +16,9 @@ import { EmailVerificationModule } from "../email-verification/email-verificatio
 		}),
 		PrismaModule,
 		EmailVerificationModule,
+
 	],
 	exports:[JwtServiceProvider]
 })
 export class AuthModule {}
+

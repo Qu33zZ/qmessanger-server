@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 export const NODEMAILER_CONFIG = {
 	service: 'gmail',
 	auth: {

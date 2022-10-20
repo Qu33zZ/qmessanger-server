@@ -1,19 +1,22 @@
 import {
 	OnGatewayConnection,
-	OnGatewayDisconnect, OnGatewayInit,
-	WebSocketGateway, WebSocketServer, WsException,
+	OnGatewayDisconnect,
+	OnGatewayInit,
+	WebSocketGateway,
+	WebSocketServer,
+	WsException,
 } from "@nestjs/websockets";
-import { SocketGatewaysService } from './socket-gateways.service';
+import { SocketGatewaysService } from "./socket-gateways.service";
 import { Server, Socket } from "socket.io";
-import { Inject, Logger, UseFilters } from "@nestjs/common";
-import { ServicesInjectTokens } from "../services.inject.tokens";
-import {Message as MessageModel, Chat as ChatModel, User as UserModel} from "@prisma/client";
+import { Logger, UseFilters } from "@nestjs/common";
+import { Chat as ChatModel, Message as MessageModel, User as UserModel } from "@prisma/client";
 import { WsExceptionsFilter } from "./handlers/exception.handler";
+import { InjectWebsocketService } from "./decotators/chat.service.inject";
 
 @WebSocketGateway({cors:{origin:"*"}})
 @UseFilters(new WsExceptionsFilter())
 export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit{
-	constructor(@Inject(ServicesInjectTokens.SocketGatewaysService) private readonly socketGatewaysService: SocketGatewaysService) {}
+	constructor(@InjectWebsocketService private readonly socketGatewaysService: SocketGatewaysService) {}
 	private readonly logger:Logger = new Logger("WebSocketGateways");
 
 	@WebSocketServer() wws:Server;

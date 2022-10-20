@@ -1,4 +1,4 @@
-import { User as UserModel, Session as SessionModel } from "@prisma/client";
+import { Session as SessionModel, User as UserModel } from "@prisma/client";
 
 export interface ILoginResponse {
 	user: UserModel;

@@ -1,26 +1,20 @@
-import {
-	BadRequestException,
-	Inject,
-	Injectable,
-	NotFoundException,
-	Provider,
-	UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, Provider, UnauthorizedException } from "@nestjs/common";
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { Session as SessionModel, User as UserModel } from "@prisma/client";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
-import { ServicesInjectTokens } from "../services.inject.tokens";
 import { IEmailVerificationService } from "../email-verification/interfaces/IEmail.verification.service";
+import { InjectJwtService } from "./decotators/jwt.service.inject";
+import { InjectEmailVerificationService } from "../email-verification/decotators/email-verification.service.inject";
 
 @Injectable()
 export class AuthService implements IAuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@Inject(ServicesInjectTokens.JwtService) private readonly jwtService: IJwtService,
-		@Inject(ServicesInjectTokens.EmailVerificationService) private readonly loginVerificationService:IEmailVerificationService
+		@InjectJwtService private readonly jwtService: IJwtService,
+		@InjectEmailVerificationService private readonly loginVerificationService:IEmailVerificationService
 	) {}
 
 	async login(loginDTO: ILoginDTO): Promise<any> {
@@ -40,7 +34,6 @@ export class AuthService implements IAuthService {
 			});
 
 		const code = await this.createVerificationCode(user);
-		console.log(code);
 		this.loginVerificationService.sendMessage(code, loginDTO.email);
 		//this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
 
@@ -109,6 +102,6 @@ export class AuthService implements IAuthService {
 };
 
 export const AuthServiceProvider: Provider = {
-	provide: ServicesInjectTokens.AuthService,
+	provide: "AuthService",
 	useClass: AuthService,
 };
