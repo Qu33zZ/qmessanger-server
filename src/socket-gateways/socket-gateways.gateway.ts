@@ -26,7 +26,7 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 	}
 
 	async handleConnection(client: Socket): Promise<any> {
-		const result = await this.socketGatewaysService.onConnectionAuthentificate(client);
+		const result = await this.socketGatewaysService.onConnectionAuthenticate(client);
 		if(result instanceof WsException) return  result;
 		this.logger.log(`New client connected with access token ${JSON.stringify(client.handshake.headers.authorization)}`);
 	}
