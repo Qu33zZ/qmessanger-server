@@ -22,7 +22,7 @@ export class UserService implements IUserService {
 	async lookForUsersByUsername(username:string): Promise<UserModel[]>{
 		const possibleUsers = await this.prismaService.user.findMany({
 			where:{
-				name:{startsWith:username}
+				username:{startsWith:username}
 			}
 		});
 		return possibleUsers;
