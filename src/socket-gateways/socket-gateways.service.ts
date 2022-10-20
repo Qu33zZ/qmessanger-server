@@ -3,13 +3,14 @@ import { WsException } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { PrismaService } from "../prisma/prisma.service";
 import { Chat as ChatModel, Message as MessageModel, User as UserModel } from "@prisma/client";
+import { ISocketsConnectedClients } from "./interfaces/ISockets.connected.clients";
 
 @Injectable()
 export class SocketGatewaysService {
 	constructor(private prismaService:PrismaService) {
 	}
 
-	private socketsWithUsersId = {};
+	private socketsWithUsersId:ISocketsConnectedClients = {};
 
 	async onConnectionAuthentificate(client:Socket){
 		const token = client.handshake.headers.authorization.split(" ")[1];
@@ -19,14 +20,16 @@ export class SocketGatewaysService {
 		});
 		if (!session) return new WsException({ message: "Invalid authorization token", code:HttpStatus.UNAUTHORIZED});
 		if (!session.user) return new WsException({ message: "User not found", code:HttpStatus.UNAUTHORIZED});
-		this.socketsWithUsersId[session.user.id] = client.id;
-
-		console.log(JSON.stringify(session));
-		console.log(this.socketsWithUsersId);
+		//add socket.io id to connected clients
+		if(this.socketsWithUsersId[session.user.id]){
+			this.socketsWithUsersId[session.user.id].push(client.id);
+		}else{
+			this.socketsWithUsersId[session.user.id] = [client.id];
+		}
 	};
 
 	async sendNewMessage(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.author, message.chat);
+		const idsToSend = await this.getClientsId(message.chat);
 
 		delete message.chat.members;
 
@@ -34,20 +37,20 @@ export class SocketGatewaysService {
 	}
 
 	async sendMessageDelete(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.author, message.chat);
+		const idsToSend = await this.getClientsId(message.chat);
 
 		return {clients:idsToSend, message};
 	}
 
 	async sendMessageEdit(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}){
-		const idsToSend = await this.getClientsId(message.author, message.chat);
+		const idsToSend = await this.getClientsId(message.chat);
 
 		return {clients:idsToSend, message};
 	}
 
-	private async getClientsId(messageAuthor:UserModel, chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
+	private async getClientsId(chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
 		return chat.members.reduce((acc:string[], member) => {
-			if(member.id !== messageAuthor.id) acc.push(this.socketsWithUsersId[member.id]);
+			acc.push(...this.socketsWithUsersId[member.id]);
 			return acc;
 		}, []);
 	}
