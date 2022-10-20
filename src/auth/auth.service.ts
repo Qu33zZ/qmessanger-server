@@ -29,6 +29,7 @@ export class AuthService implements IAuthService {
 				data: {
 					name: "User",
 					surname: (Math.random() * 10000).toFixed(0),
+					username:`user_${Date.now() + (Math.random() * 1000).toFixed(0)}`,
 					email: loginDTO.email,
 				},
 			});
@@ -58,7 +59,6 @@ export class AuthService implements IAuthService {
 	}
 
 	async refresh(refreshToken:string):Promise<ILoginResponse>{
-		console.log("Refreshing")
 		if(!refreshToken) throw new BadRequestException({message:"Invalid refresh token: no token"});
 
 		const session = await this.prismaService.session.findFirst({where:{refreshToken}});
