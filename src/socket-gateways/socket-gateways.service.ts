@@ -12,7 +12,7 @@ export class SocketGatewaysService {
 
 	private socketsWithUsersId:ISocketsConnectedClients = {};
 
-	async onConnectionAuthentificate(client:Socket){
+	async onConnectionAuthenticate(client:Socket){
 		const token = client.handshake.headers.authorization.split(" ")[1];
 		const session = await this.prismaService.session.findFirst({
 			where: { accessToken:token},
