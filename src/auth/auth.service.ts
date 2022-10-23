@@ -8,7 +8,7 @@ import { ILoginResponse } from "./interfaces/ILogin.response";
 import { IEmailVerificationService } from "../email-verification/interfaces/IEmail.verification.service";
 import { InjectAccessJwtService } from "./decotators/access.jwt.service.inject";
 import { InjectEmailVerificationService } from "../email-verification/decotators/email-verification.service.inject";
-import { InjectRefreshJwtService } from "./decotators/refresh.jwt.service";
+import { InjectRefreshJwtService } from "./decotators/refresh.jwt.service.inject";
 import { IJwtSecrets } from "./interfaces/IJwt.secrets";
 import { ISessionTokens } from "./interfaces/ISession.tokens";
 
