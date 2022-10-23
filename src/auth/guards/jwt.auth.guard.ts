@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { IJwtService } from "../interfaces/IJwt.service";
-import { InjectJwtService } from "../decotators/jwt.service.inject";
+import { InjectAccessJwtService } from "../decotators/access.jwt.service.inject";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@InjectJwtService private readonly jwtService:IJwtService
+		@InjectAccessJwtService private readonly accessJwtService:IJwtService
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
 		});
 		if (!session) throw new UnauthorizedException({ message: "Invalid authorization token" });
 
-		const isTokenValid = await this.jwtService.verifyJwt(token);
+		const isTokenValid = await this.accessJwtService.verifyJwt(token);
 		if(!isTokenValid) throw new UnauthorizedException({ message: "Invalid authorization token" });
 
 		if (!session.user) throw new UnauthorizedException({ message: "User not found" });

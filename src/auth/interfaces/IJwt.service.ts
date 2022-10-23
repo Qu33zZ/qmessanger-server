@@ -1,7 +1,6 @@
 import { User as UserModel } from "@prisma/client";
-import { ISessionTokens } from "./ISession.tokens";
 
 export interface IJwtService {
-	generateJwtPair(user: UserModel): Promise<ISessionTokens>;
+	generateJwt(user: UserModel): Promise<string>;
 	verifyJwt(token:string):Promise<UserModel | null>;
 }

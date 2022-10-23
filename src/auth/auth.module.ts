@@ -3,22 +3,21 @@ import { Module } from "@nestjs/common";
 import { AuthServiceProvider } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../prisma/prisma.module";
-import { JwtServiceProvider } from "./jwt.service";
+import { RefreshJwtServiceProvider } from "./refresh.jwt.service";
+import { AccessJwtServiceProvider } from "./access.jwt.service";
 import { JwtModule } from "@nestjs/jwt";
 import { EmailVerificationModule } from "../email-verification/email-verification.module";
 
 @Module({
 	controllers: [AuthController],
-	providers: [AuthServiceProvider, JwtServiceProvider],
+	providers: [AuthServiceProvider, AccessJwtServiceProvider, RefreshJwtServiceProvider],
 	imports: [
-		JwtModule.register({
-			secret: process.env.JWT_SECRET || "asdfbgfdafgewr32rdsgbkfnskfshbj3",
-		}),
+		JwtModule.register({}),
 		PrismaModule,
 		EmailVerificationModule,
 
 	],
-	exports:[JwtServiceProvider]
+	exports:[AccessJwtServiceProvider, RefreshJwtServiceProvider]
 })
 export class AuthModule {}
 

@@ -50,7 +50,7 @@ export class SocketGatewaysService {
 
 	private async getClientsId(chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
 		return chat.members.reduce((acc:string[], member) => {
-			acc.push(...this.socketsWithUsersId[member.id]);
+			acc.push(...(this.socketsWithUsersId[member.id] || []));
 			return acc;
 		}, []);
 	}

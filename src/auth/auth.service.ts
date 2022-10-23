@@ -6,14 +6,18 @@ import { Session as SessionModel, User as UserModel } from "@prisma/client";
 import { IJwtService } from "./interfaces/IJwt.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
 import { IEmailVerificationService } from "../email-verification/interfaces/IEmail.verification.service";
-import { InjectJwtService } from "./decotators/jwt.service.inject";
+import { InjectAccessJwtService } from "./decotators/access.jwt.service.inject";
 import { InjectEmailVerificationService } from "../email-verification/decotators/email-verification.service.inject";
+import { InjectRefreshJwtService } from "./decotators/refresh.jwt.service";
+import { IJwtSecrets } from "./interfaces/IJwt.secrets";
+import { ISessionTokens } from "./interfaces/ISession.tokens";
 
 @Injectable()
 export class AuthService implements IAuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@InjectJwtService private readonly jwtService: IJwtService,
+		@InjectAccessJwtService private readonly accessJwtService: IJwtService,
+		@InjectRefreshJwtService private readonly refreshJwtService: IJwtService,
 		@InjectEmailVerificationService private readonly loginVerificationService:IEmailVerificationService
 	) {}
 
@@ -36,7 +40,6 @@ export class AuthService implements IAuthService {
 
 		const code = await this.createVerificationCode(user);
 		this.loginVerificationService.sendMessage(code, loginDTO.email);
-		//this.smsService.sendMessage(`Your verification code - ${code}`, loginDTO.phoneNumber);
 
 		return { userId: user.id};
 	}
@@ -64,12 +67,13 @@ export class AuthService implements IAuthService {
 		const session = await this.prismaService.session.findFirst({where:{refreshToken}});
 		if(!session) throw new BadRequestException({message:"Invalid refresh token: no session"});
 
-		const validTokenData = await this.jwtService.verifyJwt(refreshToken);
+		const validTokenData = await this.refreshJwtService.verifyJwt(refreshToken);
 		if(!validTokenData) throw new BadRequestException({message:"Invalid refresh token: invalid token"});
 
 		const user = await this.prismaService.user.findFirst({where:{id:validTokenData.id}});
 
-		const newPairOfTokens = await this.jwtService.generateJwtPair(user);
+		//generate new tokens
+		const newPairOfTokens = await this.generateJwtPair(user);
 
 		const updatedSession = await this.prismaService.session.update({where:{id:session.id}, data:{...newPairOfTokens, createdAt:new Date()}})
 
@@ -88,8 +92,18 @@ export class AuthService implements IAuthService {
 		return;
 	}
 
+	private async generateJwtPair(user:UserModel):Promise<ISessionTokens>{
+		const accessToken = await this.accessJwtService.generateJwt(user);
+		const refreshToken = await this.refreshJwtService.generateJwt(user);
+
+		const newPairOfTokens:ISessionTokens = {
+			accessToken,
+			refreshToken
+		}
+		return newPairOfTokens;
+	}
 	private async createSession(user: UserModel): Promise<SessionModel> {
-		const jwtPair = await this.jwtService.generateJwtPair(user);
+		const jwtPair = await this.generateJwtPair(user);
 
 		const session = await this.prismaService.session.create({
 			data: {
@@ -99,7 +113,7 @@ export class AuthService implements IAuthService {
 		});
 		return session;
 	}
-};
+}
 
 export const AuthServiceProvider: Provider = {
 	provide: "AuthService",
