@@ -19,6 +19,15 @@ export class UserService implements IUserService {
 		return user;
 	}
 
+	async lookForUsersByUsername(username:string): Promise<UserModel[]>{
+		const possibleUsers = await this.prismaService.user.findMany({
+			where:{
+				username:{startsWith:username}
+			}
+		});
+		return possibleUsers;
+	}
+
 	async edit(userId:string, data: Partial<IUserDTO>): Promise<UserModel> {
 		const user = await this.prismaService.user.update({ where: { id:userId }, data });
 		return user;

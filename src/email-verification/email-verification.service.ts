@@ -10,7 +10,7 @@ export class EmailVerificationService implements IEmailVerificationService{
 		const message = {
 			from:process.env.GMAIL_USER,
 			to:email,
-			subject:`QMessanger verification code is ${code}`,
+			subject:`Your QMessanger verification code is ${code}`,
 			html:`
 				<!DOCTYPE html>
 		<html lang="en">

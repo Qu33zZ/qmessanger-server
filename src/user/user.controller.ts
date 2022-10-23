@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, UseGuards } from "@nestjs/common";
 import { IUserService } from "./interfaces/IUser.service";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "./decorators/user.decorator";
@@ -22,10 +22,8 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	async updateMe(@User() user:UserModel, @Body() updateDto:Partial<IUserDTO>):Promise<UserModel>{
 		return await this.userService.edit(user.id, updateDto)
-<<<<<<< Updated upstream
 	};
-=======
-	}
+
 
 	@Get("/:username")
 	@HttpCode(HttpStatus.OK)
@@ -33,6 +31,5 @@ export class UserController {
 	async findUser(@Param("username") username:string):Promise<UserModel[]>{
 		return await this.userService.lookForUsersByUsername(username);
 	}
-
->>>>>>> Stashed changes
+  
 }
