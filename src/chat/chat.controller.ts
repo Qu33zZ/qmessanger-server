@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
 import { Chat as ChatModel, User as UserModel } from "@prisma/client";
 import { IChatService } from "./interfaces/IChatService";
 import { IChatCreateDTO } from "./interfaces/IChat.create.dto";
@@ -11,12 +11,14 @@ export class ChatController {
 	constructor(@InjectChatService private readonly chatService: IChatService) {}
 
 	@Get()
+	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
 	async getAllChats(@User() user:UserModel): Promise<ChatModel[]> {
 		return await this.chatService.findAll(user);
 	}
 
 	@Post("/")
+	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(JwtAuthGuard)
 	async create(@User() user: UserModel, @Body() dto: IChatCreateDTO): Promise<ChatModel> {
 		return await this.chatService.create(user, dto);

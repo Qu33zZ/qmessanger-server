@@ -22,5 +22,17 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	async updateMe(@User() user:UserModel, @Body() updateDto:Partial<IUserDTO>):Promise<UserModel>{
 		return await this.userService.edit(user.id, updateDto)
+<<<<<<< Updated upstream
 	};
+=======
+	}
+
+	@Get("/:username")
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(JwtAuthGuard)
+	async findUser(@Param("username") username:string):Promise<UserModel[]>{
+		return await this.userService.lookForUsersByUsername(username);
+	}
+
+>>>>>>> Stashed changes
 }
