@@ -24,11 +24,13 @@ export class ChatService implements IChatService {
 		});
 
 		return !!chat;
-	};
+	}
 
 	async create(user: UserModel, dto: IChatCreateDTO): Promise<ChatModel> {
 		const member = await this.userService.find("id", dto.memberId);
 		if (!member) throw new BadRequestException({ message: `User ${dto.memberId} not found. Invalid id provided!` });
+
+		if(user.id === dto.memberId) throw new BadRequestException({message:"You can't create chat with yourself"});
 
 		const chatAlreadyExists = await this.checkIfChatExists([user.id, dto.memberId]);
 		if(chatAlreadyExists) throw new BadRequestException({message:"Chat already exists"})

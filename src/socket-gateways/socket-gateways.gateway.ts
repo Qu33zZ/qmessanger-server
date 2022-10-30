@@ -20,15 +20,15 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 	private readonly logger:Logger = new Logger("WebSocketGateways");
 
 	@WebSocketServer() wws:Server;
-
+	
 	afterInit(server: Server): any {
 		this.logger.log("Socket's server started successfully")
 	}
 
 	async handleConnection(client: Socket): Promise<any> {
 		const result = await this.socketGatewaysService.onConnectionAuthenticate(client);
-		if(result instanceof WsException) return  result;
-		this.logger.log(`New client connected with access token ${JSON.stringify(client.handshake.headers.authorization)}`);
+		if(result instanceof WsException) return result;
+		this.logger.log(`--- [ Connected ] access token ${JSON.stringify(client.handshake.headers.authorization)}`);
 	}
 
 	async sendNewMessageToClient(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}):Promise<any>{
@@ -46,8 +46,13 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 		this.wws.to(messageData.clients).emit("messageEdit", message);
 	}
 
+	async sendChatCreation(chat:ChatModel & {members:UserModel[]}){
+		const chatData = await this.socketGatewaysService.formatChatForEvents(chat)
+		this.wws.to(chatData.clients).emit("chatCreate", chat);
+	}
 
-	handleDisconnect(client: Socket): any {
+	async handleDisconnect(client: Socket): Promise<any> {
+		await this.socketGatewaysService.handleDisconnect(client);
 	}
 
 
