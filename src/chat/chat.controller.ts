@@ -25,7 +25,9 @@ export class ChatController {
 	}
 
 	@Delete("/:id")
-	async delete(@Param(":id") chatId: string): Promise<ChatModel> {
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(JwtAuthGuard)
+	async delete(@Param("id") chatId: string): Promise<ChatModel> {
 		return await this.chatService.delete(chatId);
 	}
 }

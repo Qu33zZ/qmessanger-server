@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger, Provider, Catch } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger, Provider, UseFilters } from "@nestjs/common";
 import { WsException } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { PrismaService } from "../prisma/prisma.service";
@@ -7,7 +7,6 @@ import { ISocketsConnectedClients } from "./interfaces/ISockets.connected.client
 import { WsExceptionsFilter } from "./handlers/exception.handler";
 
 @Injectable()
-@Catch(WsExceptionsFilter)
 export class SocketGatewaysService {
 	private readonly logger:Logger = new Logger("SocketGatewaysService")
 	constructor(private prismaService:PrismaService) {
@@ -21,20 +20,18 @@ export class SocketGatewaysService {
 			where: { accessToken:token},
 			include: { user: true },
 		});
-		if (!session) throw new WsException({ message: "Invalid authorization token", code:HttpStatus.UNAUTHORIZED});
-		if (!session.user) throw new WsException({ message: "User not found", code:HttpStatus.UNAUTHORIZED});
+
+		if (!session) return null;
 
 		return session.user;
 	}
 
 	async onConnectionAuthenticate(client:Socket){
 		const user = await this.authenticateUser(client);
-		if(!user) return new WsException({message:"Not authorized", code:HttpStatus.UNAUTHORIZED});
-
-		//add socket.io id to connected clients
+		if(!user) return client.disconnect();
 		if(this.socketsWithUsersId[user.id]){
 			this.socketsWithUsersId[user.id].push(client.id);
-		}else{
+		}else {
 			this.socketsWithUsersId[user.id] = [client.id];
 		}
 	}
@@ -67,7 +64,6 @@ export class SocketGatewaysService {
 	async handleDisconnect(client:Socket):Promise<void>{
 		const user = await this.authenticateUser(client);
 		if(!user) return;
-
 		const usersConnectedSocketsIds = this.socketsWithUsersId[user.id];
 
 		//check if user has connected sessions
@@ -77,7 +73,8 @@ export class SocketGatewaysService {
 		this.socketsWithUsersId[user.id] = newClientsIds;
 
 		this.logger.log(`--- [ Disconnected ] ${client.id}`)
-	};
+
+	}
 
 	private async getClientsId(chat:ChatModel & {members:UserModel[]}):Promise<string[]>{
 		return chat.members.reduce((acc:string[], member) => {
