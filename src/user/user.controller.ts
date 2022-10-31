@@ -1,10 +1,11 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { IUserService } from "./interfaces/IUser.service";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "./decorators/user.decorator";
 import { User as UserModel } from "@prisma/client";
 import { IUserDTO } from "./interfaces/IUser.dto";
 import { InjectUserService } from "./decorators/user.service.inject";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("users")
 export class UserController {
@@ -20,7 +21,12 @@ export class UserController {
 	@Put("/@me")
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
-	async updateMe(@User() user:UserModel, @Body() updateDto:Partial<IUserDTO>):Promise<UserModel>{
+	@UseInterceptors(FileInterceptor('avatar'))
+	async updateMe(@User() user:UserModel, @Body() updateDto:Partial<IUserDTO>, @UploadedFile() avatar:Express.Multer.File):Promise<UserModel>{
+		if(avatar){
+			console.log(avatar);
+			updateDto.avatar = avatar.filename;
+		}
 		return await this.userService.edit(user.id, updateDto)
 	};
 
