@@ -17,7 +17,6 @@ export class FilesService implements IFilesService{
 
     async deleteOldFile(filename:string):Promise<void>{
         const pathToFile = resolve(this.pathToDestinationFolder, filename);
-        console.log(pathToFile);
         if (fs.existsSync(pathToFile)){ 
             fs.unlinkSync(pathToFile);
         }

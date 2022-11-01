@@ -17,7 +17,7 @@ import { FilesModule } from './files/files.module';
 		MessagingModule,
 		SocketGatewaysModule,
 		EmailVerificationModule,
-		FilesModule
+		FilesModule,
 	],
 	controllers: [],
 	providers: [],
