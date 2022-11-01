@@ -7,6 +7,7 @@ import { MulterModule } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { randomUUID } from "crypto";
+import { FilesModule } from "src/files/files.module";
 
 @Module({
 	controllers: [UserController],
@@ -22,6 +23,10 @@ import { randomUUID } from "crypto";
 				},
 				
 			})
+		}),
+		FilesModule.forRoot({
+			module:"users",
+			submodule:"avatars"
 		})
 	],
 	exports:[UserServiceProvider]

@@ -3,11 +3,16 @@ import { PrismaService } from "../prisma/prisma.service";
 import { User as UserModel } from "@prisma/client";
 import { IUserService } from "./interfaces/IUser.service";
 import { IUserDTO } from "./interfaces/IUser.dto";
+import { InjectFilesService } from "src/files/decorators/files.service.inject";
+import { IFilesService } from "src/files/interfaces/ifiles.service";
 
 
 @Injectable()
 export class UserService implements IUserService {
-	constructor(private readonly prismaService: PrismaService) {}
+	constructor(
+		private readonly prismaService: PrismaService,
+		@InjectFilesService private readonly filesService:IFilesService
+	) {}
 
 	async create(data): Promise<UserModel> {
 		const user = await this.prismaService.user.create(data);
@@ -28,9 +33,12 @@ export class UserService implements IUserService {
 		return possibleUsers;
 	}
 
-	async edit(userId:string, data: Partial<IUserDTO>): Promise<UserModel> {
-		const user = await this.prismaService.user.update({ where: { id:userId }, data });
-		return user;
+	async edit(user:UserModel, data: Partial<IUserDTO>): Promise<UserModel> {
+		if(data.avatar && user.avatar){
+			await this.filesService.deleteOldFile(user.avatar);
+		}
+		const updatedUser = await this.prismaService.user.update({ where: { id:user.id }, data });
+		return updatedUser;
 	}
 
 	async delete(id: string): Promise<void> {}

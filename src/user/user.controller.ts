@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { IUserService } from "./interfaces/IUser.service";
 import { JwtAuthGuard } from "../auth/guards/jwt.auth.guard";
 import { User } from "./decorators/user.decorator";
@@ -24,10 +24,9 @@ export class UserController {
 	@UseInterceptors(FileInterceptor('avatar'))
 	async updateMe(@User() user:UserModel, @Body() updateDto:Partial<IUserDTO>, @UploadedFile() avatar:Express.Multer.File):Promise<UserModel>{
 		if(avatar){
-			console.log(avatar);
 			updateDto.avatar = avatar.filename;
 		}
-		return await this.userService.edit(user.id, updateDto)
+		return await this.userService.edit(user, updateDto)
 	};
 
 
