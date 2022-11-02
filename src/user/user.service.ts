@@ -37,6 +37,10 @@ export class UserService implements IUserService {
 		if(data.avatar && user.avatar){
 			await this.filesService.deleteOldFile(user.avatar);
 		}
+		if(!user.verified){
+			const updatedUser = await this.prismaService.user.update({ where: { id:user.id }, data:{...data, verified:true} });
+			return updatedUser;
+		}
 		const updatedUser = await this.prismaService.user.update({ where: { id:user.id }, data });
 		return updatedUser;
 	}
@@ -44,6 +48,7 @@ export class UserService implements IUserService {
 	async delete(id: string): Promise<void> {}
 }
 
+//create custom provider for user service
 export const UserServiceProvider: Provider = {
 	provide: "UserService",
 	useClass: UserService,
