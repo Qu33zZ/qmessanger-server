@@ -33,8 +33,8 @@ export class UserController {
 	@Get("/:username")
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
-	async findUser(@Param("username") username:string):Promise<UserModel[]>{
-		return await this.userService.lookForUsersByUsername(username);
+	async findUser(@User() user:UserModel, @Param("username") username:string):Promise<UserModel[]>{
+		return await this.userService.lookForUsersByUsername(user, username);
 	}
   
 }
