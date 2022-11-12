@@ -10,7 +10,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 @Controller("users")
 export class UserController {
 	constructor(@InjectUserService private readonly userService: IUserService) {};
-
+	
 	@Get("/@me")
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
@@ -28,7 +28,6 @@ export class UserController {
 		}
 		return await this.userService.edit(user, updateDto)
 	};
-
 
 	@Get("/:username")
 	@HttpCode(HttpStatus.OK)

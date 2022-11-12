@@ -23,7 +23,14 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 	}
 
 	async handleConnection(client: Socket): Promise<void> {
-		await this.socketGatewaysService.onConnectionAuthenticate(client);
+		const user = await this.socketGatewaysService.onConnectionAuthenticate(client);
+		if(user) this.sendUserGoToOnline(user);
+	}
+
+	async handleDisconnect(client: Socket): Promise<any> {
+		const user = await this.socketGatewaysService.handleDisconnect(client);
+		if(user) this.sendUserGoToOffline(user);
+
 	}
 
 	async sendNewMessageToClient(message: MessageModel & {author: UserModel, chat: ChatModel & {members:UserModel[]}}):Promise<any>{
@@ -46,9 +53,14 @@ export class SocketGatewaysGateway implements OnGatewayConnection, OnGatewayDisc
 		this.wws.to(chatData.clients).emit("chatCreate", chat);
 	}
 
-	async handleDisconnect(client: Socket): Promise<any> {
-		await this.socketGatewaysService.handleDisconnect(client);
+	private async sendUserGoToOnline(user:UserModel): Promise<void>{
+		const clientIds = await this.socketGatewaysService.getMutualUsersClientsIds(user);
+		this.wws.to(clientIds).emit("userOnline", user.id);
 	}
 
+	private async sendUserGoToOffline(user:UserModel): Promise<void>{
+		const clientIds = await this.socketGatewaysService.getMutualUsersClientsIds(user);
+		this.wws.to(clientIds).emit("userOffline", {userId:user.id, lastOnlineAt:user.lastOnlineAt});
+	}
 
 }

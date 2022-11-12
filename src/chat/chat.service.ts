@@ -59,7 +59,6 @@ export class ChatService implements IChatService {
 				}
 			}
 		})
-
 		return chats;
 	}
 

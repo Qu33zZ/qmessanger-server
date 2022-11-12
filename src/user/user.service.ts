@@ -5,13 +5,15 @@ import { IUserService } from "./interfaces/IUser.service";
 import { IUserDTO } from "./interfaces/IUser.dto";
 import { InjectFilesService } from "src/files/decorators/files.service.inject";
 import { IFilesService } from "src/files/interfaces/ifiles.service";
+import { InjectWebsocketService } from "src/socket-gateways/decotators/chat.service.inject";
+import { SocketGatewaysService } from "src/socket-gateways/socket-gateways.service";
 
 
 @Injectable()
 export class UserService implements IUserService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		@InjectFilesService private readonly filesService:IFilesService
+		@InjectFilesService private readonly filesService:IFilesService,
 	) {}
 
 	async create(data): Promise<UserModel> {
@@ -46,6 +48,21 @@ export class UserService implements IUserService {
 		}
 		const updatedUser = await this.prismaService.user.update({ where: { id:user.id }, data });
 		return updatedUser;
+	}
+
+	async getMutualUsers(user: UserModel): Promise<UserModel[]> {
+		return await this.prismaService.user.findMany({
+			where:{
+				chats:{
+					some:{
+						members:{
+							some:{id:{equals:user.id}},
+						}
+					}
+				},
+				id:{not:{equals:user.id}}
+			},
+		});
 	}
 
 	async delete(id: string): Promise<void> {}

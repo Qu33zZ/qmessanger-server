@@ -7,12 +7,13 @@ import { MulterModule } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { randomUUID } from "crypto";
-import { FilesModule } from "src/files/files.module";
+import { FilesModule } from "../files/files.module";
 
 @Module({
 	controllers: [UserController],
 	providers: [UserServiceProvider],
-	imports: [PrismaModule, 
+	imports: [
+		PrismaModule, 
 		AuthModule,
 		MulterModule.register({
 			storage:diskStorage({

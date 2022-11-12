@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+    api:
+        build:
+            dockerfile: Dockerfile
+            context: .
+        depends_on: 
+            - postgres
+        env_file:
+            - ./.env
+        ports:
+            - "8080:5000"
+
+    postgres:
+        image: postgres:10.4
+        ports:
+            - "5432:5432"
+        environment: 
+            POSTGRES_USER: queezz
+            POSTGRES_PASSWORD: N9N49N7S
+            POSTGRES_DB: qmessanger
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data

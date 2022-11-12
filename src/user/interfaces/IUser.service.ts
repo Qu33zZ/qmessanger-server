@@ -7,4 +7,5 @@ export interface IUserService {
 	create(data: IUserDTO): Promise<UserModel>;
 	edit(user:UserModel, dto:Partial<IUserDTO>): Promise<UserModel>;
 	delete(id: string): Promise<void>;
+	getMutualUsers(user:UserModel): Promise<UserModel[]>;
 }
