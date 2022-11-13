@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Headers, HttpCode, HttpStatus, Param, Post, Req } from "@nestjs/common";
 import { ILoginDTO } from "./interfaces/ILogin.dto";
 import { IAuthService } from "./interfaces/IAuth.service";
 import { ILoginResponse } from "./interfaces/ILogin.response";
@@ -25,9 +25,9 @@ export class AuthController {
 
 	@Post("/refresh")
 	@HttpCode(HttpStatus.OK)
-	async refresh(@Req() request: Request) {
-		console.log(request.cookies);
-		return await this.authService.refresh(request.cookies?.refreshToken);
+	async refresh(@Headers() headers:any) {
+		console.log(headers);
+		return await this.authService.refresh(headers.refreshToken);
 	}
 
 	@Post("/logout")

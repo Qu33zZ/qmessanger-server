@@ -9,8 +9,10 @@ async function bootstrap() {
 	app.enableCors({origin:["http://localhost:3000", "https://qmessanger.vercel.app"], credentials:true});
 	app.setGlobalPrefix("api");
 	app.use(cookieParser());
+
 	await app.listen(PORT, () => {
 		console.log(`Server successfully started on port ${PORT}`);
 	});
 }
 bootstrap();
+

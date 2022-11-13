@@ -16,7 +16,6 @@ export class MessagingController {
 	@UseGuards(JwtAuthGuard)
 	async sendMessage(@User() user:UserModel, @Param("channelId") channelId:string, @Body() messageDto:IMessageCreateDTO){
 		return await this.messagingService.create(user, channelId, messageDto);
-
 	}
 
 	@Get("/channels/:channelId")

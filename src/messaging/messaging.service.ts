@@ -46,12 +46,14 @@ export class MessagingService implements IMessagingService {
 			include:{
 				chat:true,
 				author:true,
-				repliedTo:true
+				repliedTo:true,
+				readBy:true
 			}
 		});
 
 		return messages;
 	}
+	
 	async update(userId:string, messageId: string, messageDto: Partial<IMessageCreateDTO>): Promise<MessageModel> {
 		const message = await this.prismaService.message.findFirst({where:{id:messageId}, include:{author:true}});
 		if(!message) throw new BadRequestException({message:"Message not found"});

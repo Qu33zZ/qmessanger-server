@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,7 +18,8 @@ model User {
   sessions Session[]
   authCodes AuthCode[]
   chats Chat[]
-  messages Message[]
+  messages Message[] @relation(name: "readBy")
+  readMessages Message[]
   lastOnlineAt DateTime @default(now())
   createdAt DateTime @default(now())
 }
@@ -60,5 +58,6 @@ model Message{
 	repliedToId String?
 	replies Message[] @relation(name:"replies")
 	content String
+	readBy User[] @relation(name:"readBy")
 	createdAt DateTime @default(now())
 }
